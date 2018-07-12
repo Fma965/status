@@ -19,15 +19,37 @@
 	<header>
 		<h1>CoolFlix Status Page</h1>
 	</header>
+	    
 	<div class="panel" id="panel">
 		<div class="panel-heading">
 			<h3 class="panel-title" id="paneltitle"></h3>
 		</div>
 	</div>
+  <br /><ul class="nav nav-tabs">
+    <li class="active"><a data-toggle="tab" href="#home">Home</a></li>
+    <li><a data-toggle="tab" href="#discussion">Discussion</a></li>
+  </ul>
+ <div class="tab-content">
+<div id="home" class="tab-pane fade in active">
 	<h4 class="page-header">Systems Status</h4>
 	<div class="list-group" id="services"></div>
 	<h4 class="page-header">Upcoming Maintenance</h4>
 	<div class="list-group" id="maintenance"></div>
+</div>
+    <div id="discussion" class="tab-pane fade">
+      	<h4 class="page-header">Discussion</h4>
+	<div id="discord">
+
+	 <widgetbot id="discordwidget"
+  server="402533646856224788"
+  channel="402533857477525524"
+  height="316px"
+  width="100%"
+>
+</widgetbot>
+<script src="https://cdn.jsdelivr.net/npm/@widgetbot/html-embed"></script></div>
+        </div>
+    </div>
 	<h4 class="page-header">Incidents</h4>
 	<div class="timeline-centered" id="incidents"></div>
 	<h4 class="page-header">Statistics</h4>
@@ -50,6 +72,7 @@
  crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js" integrity="sha256-XF29CBwU1MWLaGEnsELogU6Y6rcc5nCkhhx89nFMIDQ="
  crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script src="script.js?v=20180304"></script>
 </body>
 
