@@ -13,7 +13,7 @@ $(document).ready(function () {
 			all_time_uptime_ratio: 1,
 			custom_uptime_ratios: "1-7-14-30",
 			response_times_average: 30,
-			response_times_warning: 600,
+			response_times_warning: 1000,
 		},
 		github: {
 			org: 'Fma965',
