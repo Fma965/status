@@ -62,10 +62,6 @@ $(document).ready(function () {
 			check.class = 'label-danger';
 			check.text = 'major outage';
 		}
-		if (check.status === 2 && Math.round(check.average_response_time) >= config.uptimerobot.response_times_warning) {
-				check.class = 'label-warning';
-				check.text = 'degraded performance';
-			}
 			return check;
 	}
 
