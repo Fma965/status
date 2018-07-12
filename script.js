@@ -70,13 +70,13 @@ $(document).ready(function () {
 		const uptime_ratio = monitor.custom_uptime_ratio.split('-');
 		const uptimeForever = monitor.all_time_uptime_ratio;
 
-			$('#services').append('<div class="list-group-item">' +
+		$('#services').append('<div class="list-group-item">' +
 			'<span class="badge ' + monitor.class + '">' + monitor.text + '</span>' +
 			'<a href="#" class="list-group-item-heading" onclick="\$\(\'\#' + monitor.clean_name + '\').toggleClass(\'collapse\');">' + monitor.friendly_name + '</a>' +
 			'<div id="' + monitor.clean_name + '" class="graph collapse">' +
 			'<canvas id="' + monitor.clean_name + '_cvs" width="400" height="150"></canvas>' +
-				'</div>' +
-				'</div>');
+			'</div>' +
+			'</div>');
 	}
 
 	function _uptimeRobotSetGraph(monitor) {
@@ -128,13 +128,13 @@ $(document).ready(function () {
 			gph_data.data.datasets[0].backgroundColor = 'rgba(0,0,0,0.5)';
 		}
 
-		monitor.response_times.forEach(function (datapoint) {
-				gph_data.data.labels.push(formatDate(new Date(datapoint.datetime * 1000), 'D d M Y H:i:s (T)'));
-				gph_data.data.datasets[0].data.push(datapoint.value);
-			});
+				monitor.response_times.forEach(function (datapoint) {
+			gph_data.data.labels.push(formatDate(new Date(datapoint.datetime * 1000), 'D d M Y H:i:s (T)'));
+			gph_data.data.datasets[0].data.push(datapoint.value);
+		});
 
-			gph_data.data.labels = gph_data.data.labels.reverse();
-			gph_data.data.datasets[0].data = gph_data.data.datasets[0].data.reverse();
+		gph_data.data.labels = gph_data.data.labels.reverse();
+		gph_data.data.datasets[0].data = gph_data.data.datasets[0].data.reverse();
 
 		const gph_ctx = $('#' + monitor.clean_name + '_cvs');
 		const gph = new Chart(gph_ctx, gph_data);
@@ -161,7 +161,7 @@ $(document).ready(function () {
 		});
 	};
 
-	$.getJSON('https://api.github.com/repos/' + config.github.org + '/' + config.github.repo + '/issues?state=all).done(GitHubEntry);
+	$.getJSON('https://api.github.com/repos/' + config.github.org + '/' + config.github.repo + '/issues?state=all').done(GitHubEntry);
 
 	var maintainIssues = [];
 	var incidentIssues = [];
@@ -261,7 +261,7 @@ $(document).ready(function () {
 		});
 	};
 
-	function formatDate(x, y) {
+		function formatDate(x, y) {
 		var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 		var fullMonths = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 		var days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
