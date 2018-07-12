@@ -17,7 +17,7 @@ $(document).ready(function () {
 		},
 		github: {
 			org: 'Fma965',
-			repo: 'statuspage'
+			repo: 'status'
 		},
 		theme: 'dark'
 	};
