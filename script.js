@@ -81,7 +81,6 @@ $(document).ready(function () {
 			'<td>' + monitor.uptime_ratio[2] + '%</td>' +
 			'<td>' + monitor.uptime_ratio[3] + '%</td>' +
 			'<td>' + monitor.uptime_ratio[4] + '%</td>' +
-			'<td>' + monitor.average_response_time + '</td>' +
 			'</tr>');
 
 		const gph_data = {
