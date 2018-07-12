@@ -18,8 +18,18 @@ $(document).ready(function () {
 		github: {
 			org: 'Fma965',
 			repo: 'statuspage'
-		}
+		},
+		theme: 'dark'
 	};
+
+	function setStyleSheet(url){
+		 var stylesheet = document.getElementById("stylesheet");
+		 stylesheet.setAttribute('href', url);
+	}
+
+	if (config.theme == 'light') {
+		setStyleSheet('style-light.css');
+	}
 
 	const status_text = {
 		'operational': 'operational',
@@ -43,20 +53,20 @@ $(document).ready(function () {
 	}
 
 	function _uptimeRobotSetStatus(check) {
-		check.class = check.status === 2 ? 'label-success' : 'label-danger';
-		check.text = check.status === 2 ? 'operational' : 'major outage';
-		if (check.status !== 2 && !check.lasterrortime) {
-			check.lasterrortime = Date.now();
-		}
-		if (check.status === 2 && Date.now() - (check.lasterrortime * 1000) <= 86400000) {
+			check.class = check.status === 2 ? 'label-success' : 'label-danger';
+			check.text = check.status === 2 ? 'operational' : 'major outage';
+			if (check.status !== 2 && !check.lasterrortime) {
+				check.lasterrortime = Date.now();
+			}
+			if (check.status === 2 && Date.now() - (check.lasterrortime * 1000) <= 86400000) {
 			check.class = 'label-danger';
 			check.text = 'major outage';
 		}
-		if (check.status === 2 && Math.round(check.average_response_time) >= 1500.000) {
-			check.class = 'label-warning';
-			check.text = 'degraded performance';
-		}
-		return check;
+		if (check.status === 2 && Math.round(check.average_response_time) >= config.uptimerobot.response_times_warning) {
+				check.class = 'label-warning';
+				check.text = 'degraded performance';
+			}
+			return check;
 	}
 
 	function _uptimeRobotSetData(monitor) {
@@ -64,23 +74,22 @@ $(document).ready(function () {
 		const uptime_ratio = monitor.custom_uptime_ratio.split('-');
 		const uptimeForever = monitor.all_time_uptime_ratio;
 
-		$('#services').append('<div class="list-group-item">' +
+			$('#services').append('<div class="list-group-item">' +
 			'<span class="badge ' + monitor.class + '">' + monitor.text + '</span>' +
 			'<a href="#" class="list-group-item-heading" onclick="\$\(\'\#' + monitor.clean_name + '\').toggleClass(\'collapse\');">' + monitor.friendly_name + '</a>' +
 			'<div id="' + monitor.clean_name + '" class="graph collapse">' +
 			'<canvas id="' + monitor.clean_name + '_cvs" width="400" height="150"></canvas>' +
-			'</div>' +
-			'</div>');
+				'</div>' +
+				'</div>');
 	}
 
 	function _uptimeRobotSetGraph(monitor) {
-		$('#statistics tbody').append('<tr>' +
+			$('#statistics tbody').append('<tr>' +
 			'<td>' + monitor.friendly_name + '</td>' +
 			'<td>' + monitor.uptime_ratio[0] + '%</td>' +
 			'<td>' + monitor.uptime_ratio[1] + '%</td>' +
 			'<td>' + monitor.uptime_ratio[2] + '%</td>' +
 			'<td>' + monitor.uptime_ratio[3] + '%</td>' +
-			'<td>' + monitor.uptime_ratio[4] + '%</td>' +
 			'</tr>');
 
 		const gph_data = {
@@ -89,12 +98,22 @@ $(document).ready(function () {
 				labels: [],
 				datasets: [{
 					label: 'Response Time (ms)',
-					backgroundColor: "rgba(255,255,255,0.6)",
+				backgroundColor: "rgba(255,255,255,0.5)",
 					data: [],
 				}]
 			},
 			options: {
+				legend: {
+					labels: {
+						fontColor: '#ddd'
+					}
+				},
 				scales: {
+					yAxes: [{
+						ticks: {
+							fontColor: '#ddd'
+						}
+					}],
 					xAxes: [{
 						display: false,
 						ticks: {
@@ -106,13 +125,19 @@ $(document).ready(function () {
 			}
 		};
 
-		monitor.response_times.forEach(function (datapoint) {
-			gph_data.data.labels.push(formatDate(new Date(datapoint.datetime * 1000), 'D d M Y H:i:s (T)'));
-			gph_data.data.datasets[0].data.push(datapoint.value);
-		});
+		if (config.theme == 'light') {
+			gph_data.options.scales.yAxes[0].ticks.fontColor = '';
+			gph_data.options.legend.labels.fontColor = '';
+			gph_data.data.datasets[0].backgroundColor = 'rgba(0,0,0,0.5)';
+		}
 
-		gph_data.data.labels = gph_data.data.labels.reverse();
-		gph_data.data.datasets[0].data = gph_data.data.datasets[0].data.reverse();
+		monitor.response_times.forEach(function (datapoint) {
+				gph_data.data.labels.push(formatDate(new Date(datapoint.datetime * 1000), 'D d M Y H:i:s (T)'));
+				gph_data.data.datasets[0].data.push(datapoint.value);
+			});
+
+			gph_data.data.labels = gph_data.data.labels.reverse();
+			gph_data.data.datasets[0].data = gph_data.data.datasets[0].data.reverse();
 
 		const gph_ctx = $('#' + monitor.clean_name + '_cvs');
 		const gph = new Chart(gph_ctx, gph_data);
@@ -126,8 +151,8 @@ $(document).ready(function () {
 		}, 'operational');
 
 		if (!$('#panel').data('incident')) {
-			$('#panel').attr('class', 'panel-success');
-			$('#paneltitle').html('All systems are operational.');
+			$('#panel').attr('class', (status === 'operational' ? 'panel-success' : 'panel-warning') );
+			$('#paneltitle').html(status === 'operational' ? 'All systems are operational.' : 'One or more systems inoperative');
 		}
 
 		data.monitors.forEach(function (item) {
@@ -139,7 +164,11 @@ $(document).ready(function () {
 		});
 	};
 
-	$.getJSON('https://api.github.com/repos/' + config.github.org + '/' + config.github.repo + '/issues?state=all').done(GitHubEntry);
+	var get_today = new Date();
+	get_today.setDate(get_today.getDate() - 14);
+	var scope_date = get_today.toISOString();
+
+	$.getJSON('https://api.github.com/repos/' + config.github.org + '/' + config.github.repo + '/issues?state=all&since=' + scope_date).done(GitHubEntry);
 
 	var maintainIssues = [];
 	var incidentIssues = [];
@@ -176,60 +205,66 @@ $(document).ready(function () {
 
 	function _gitHubIncidents(issues) {
 		issues.forEach(function (issue) {
-			var status = issue.labels.reduce(function (status, label) {
-				if (/^status:/.test(label.name)) {
-					return label.name.replace('status:', '');
-				} else {
-					return status;
+				var status = issue.labels.reduce(function (status, label) {
+					if (/^status:/.test(label.name)) {
+						return label.name.replace('status:', '');
+					} else {
+						return status;
+					}
+				}, 'operational');
+
+				var systems = issue.labels.filter(function (label) {
+					return /^system:/.test(label.name);
+				}).map(function (label) {
+					return label.name.replace('system:', '')
+				});
+
+				if (issue.state === 'open') {
+					$('#panel').data('incident', 'true');
+					$('#panel').attr('class', (status !== 'operational' ? 'panel-danger' : 'panel-warning') );
+					$('#paneltitle').html('<a href="#incidents">' + issue.title + '</a>');
 				}
-			}, 'operational');
 
-			var systems = issue.labels.filter(function (label) {
-				return /^system:/.test(label.name);
-			}).map(function (label) {
-				return label.name.replace('system:', '')
-			});
+				var html = '<article class="timeline-entry">\n';
+				html += '<div class="timeline-entry-inner">\n';
 
-			if (issue.state === 'open') {
-				$('#panel').data('incident', 'true');
-				$('#panel').attr('class', 'panel-warning');
-				$('#paneltitle').html('One or more systems inoperative');
-			}
+				if (issue.state === 'closed') {
+					html += '<div class="timeline-icon bg-success"><i class="entypo-feather"></i></div>';
+				} else if (issue.state === 'open' && status === 'operational'){
+					html += '<div class="timeline-icon bg-warn"><i class="entypo-feather"></i></div>';
+				} else {
+					html += '<div class="timeline-icon bg-secondary"><i class="entypo-feather"></i></div>';
+				}
 
-			var html = '<article class="timeline-entry">\n';
-			html += '<div class="timeline-entry-inner">\n';
-
-			if (issue.state === 'closed') {
-				html += '<div class="timeline-icon bg-success"><i class="entypo-feather"></i></div>';
-			} else {
-				html += '<div class="timeline-icon bg-secondary"><i class="entypo-feather"></i></div>';
-			}
-
-			html += '<div class="timeline-label">\n';
+				html += '<div class="timeline-label">\n';
 			html += '<span class="date">' + formatDate(new Date(issue.created_at), 'D d M Y H:i:s (T)') + '</span>\n';
 
-			if (issue.state === 'closed') {
-				html += '<span class="badge label-success pull-right">closed</span>';
-			} else {
-				html += '<span class="badge ' + (status === 'operational' ? 'label-success' : 'label-warn') + ' pull-right">open</span>\n';
-			}
+				if (issue.state === 'closed') {
+					html += '<span class="badge label-success pull-right">closed</span>';
+				} else {
+					html += '<span class="badge ' + (status !== 'operational' ? 'label-danger' : 'label-warning') + ' pull-right">open</span>\n';
+				}
 
-			for (var i = 0; i < systems.length; i++) {
-				html += '<span class="badge system pull-right">' + systems[i] + '</span>';
-			}
+				for (var i = 0; i < systems.length; i++) {
+					html += '<span class="badge system pull-right">' + systems[i] + '</span>';
+				}
 
-			html += '<h2>' + issue.title + '</h2>\n';
-			html += '<hr>\n';
-			html += '<p>' + issue.body + '</p>\n';
+				html += '<h2>' + issue.title + '</h2>\n';
+				html += '<hr>\n';
+				html += '<p>' + issue.body + '</p>\n';
 
-			if (issue.state === 'closed') {
-				html += '<p><em>Updated ' + formatDate(new Date(issue.closed_at), 'D d M Y H:i:s (T)') + '<br/>';
-				html += 'The system is back in normal operation.</p>';
-			}
-			html += '</div>';
-			html += '</div>';
-			html += '</article>';
-			$('#incidents').append(html);
+				if (issue.state === 'open' && issue.created_at !== issue.updated_at) {
+					html += '<p><em>Last update ' + formatDate(new Date(issue.updated_at), 'D d M Y H:i:s (T)') + '</p>'
+				}
+
+				if (issue.state === 'closed') {
+					html += '<p><em>Updated ' + formatDate(new Date(issue.closed_at), 'D d M Y H:i:s (T)') + '<br/>';
+					html += 'The system is back in normal operation.</p>';
+				}
+				html += '</div>';
+				html += '</div>';
+				html += '</article>';
+				$('#incidents').append(html);
 		});
 	};
 
