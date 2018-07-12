@@ -1,4 +1,4 @@
-$(document).ready(function () { 
+$(document).ready(function () {
 	const config = {
 		uptimerobot: {
 			api_keys: [
@@ -13,11 +13,11 @@ $(document).ready(function () {
 			all_time_uptime_ratio: 1,
 			custom_uptime_ratios: "1-7-14-30",
 			response_times_average: 30,
-			response_times_warning: 1000,
+			response_times_warning: 3000,
 		},
 		github: {
 			org: 'Fma965',
-			repo: 'status'
+			repo: 'statuspage'
 		},
 		theme: 'dark'
 	};
@@ -86,6 +86,7 @@ $(document).ready(function () {
 			'<td>' + monitor.uptime_ratio[1] + '%</td>' +
 			'<td>' + monitor.uptime_ratio[2] + '%</td>' +
 			'<td>' + monitor.uptime_ratio[3] + '%</td>' +
+			'<td>' + monitor.uptime_ratio[4] + '%</td>' +
 			'</tr>');
 
 		const gph_data = {
@@ -160,11 +161,7 @@ $(document).ready(function () {
 		});
 	};
 
-	var get_today = new Date();
-	get_today.setDate(get_today.getDate() - 14);
-	var scope_date = get_today.toISOString();
-
-	$.getJSON('https://api.github.com/repos/' + config.github.org + '/' + config.github.repo + '/issues?state=all&since=' + scope_date).done(GitHubEntry);
+	$.getJSON('https://api.github.com/repos/' + config.github.org + '/' + config.github.repo + '/issues?state=all).done(GitHubEntry);
 
 	var maintainIssues = [];
 	var incidentIssues = [];
