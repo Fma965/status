@@ -2,13 +2,11 @@ $(document).ready(function () {
 	const config = {
 		uptimerobot: {
 			api_keys: [
-				"m780090170-307802bca0e1a3ffb9fe4871",
-                                "m780090129-f6a062bb5bbbf4d3a39249ff",
-                                "m780090127-22b0732f27340ad09b844f8b",
-                                "m780090148-323c8ac075c3f6a6a7a47b6a",
-                                "m780090154-41f4ce548b5a2c845fb48aef",
-                                "m780090138-72e1c0dfd07548ce18b04837",
-                                "m780090142-2d1203a7175ee7cd8c78c3ff",
+				"m780690530-59fde635ded0facb5a2f47bf",
+                                "m780690543-54ed402f018a59545991b316",
+                                "m780690541-a189e9cb306a46857a8164e5",
+                                "m780690561-87e23a77557855403f22cf21",
+                                "m780690560-8a940922a9bf44c40fd4a6a1",
 			],
 			logs: 1,
 			response_times: 1,
