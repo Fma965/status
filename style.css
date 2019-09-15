@@ -359,7 +359,7 @@ header {
 	    text-align: center;
 }
 
-.service-Monitorr, .service-Tautulli, .service-Sonarr, .service-Radarr, .service-Radarr_4K, .service-Lidarr, .service-Jackett, .service-Grafana, .service-NZBGet, .service-NZBHydra2 {
+.service-Monitorr, .service-Deluge_VPN,  .service-Tautulli, .service-Sonarr, .service-Radarr, .service-Radarr_4K, .service-Lidarr, .service-Jackett, .service-Grafana, .service-NZBGet, .service-NZBHydra2 {
 display:none;
 }
 
